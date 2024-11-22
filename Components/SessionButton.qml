@@ -1,6 +1,4 @@
 // Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
-// Copyright (C) 2022-2024 Keyitdev
-// Based on https://github.com/MarianArlt/sddm-sugar-dark
 // Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
 
 import QtQuick 2.15
@@ -19,26 +17,19 @@ Item {
 
     ComboBox {
         id: selectSession
-        // important
-        // change also in errorMessage
+        width: sessionButton.width * 0.9
         height: root.font.pointSize * 2
         hoverEnabled: true
         anchors.left: parent.left
+
         Keys.onPressed: {
-            if (event.key == Qt.Key_Up && loginButton.state != "enabled" && !popup.opened)
-                revealSecret.focus = true,
-                revealSecret.state = "focused",
-                currentIndex = currentIndex + 1;
-            if (event.key == Qt.Key_Up && loginButton.state == "enabled" && !popup.opened)
-                loginButton.focus = true,
-                loginButton.state = "focused",
-                currentIndex = currentIndex + 1;
-            if (event.key == Qt.Key_Down && !popup.opened)
-                systemButtons.children[0].focus = true,
-                systemButtons.children[0].state = "focused",
-                currentIndex = currentIndex - 1;
-            if ((event.key == Qt.Key_Left || event.key == Qt.Key_Right) && !popup.opened)
+            if (event.key == Qt.Key_Up && loginButton && !popup.opened) {
+                loginButton.forceActiveFocus();
+            } else if (event.key == Qt.Key_Down && systemButtons && !popup.opened) {
+                systemButtons.children[0].forceActiveFocus();
+            } else if ((event.key == Qt.Key_Left || event.key == Qt.Key_Right) && !popup.opened) {
                 popup.open();
+            }
         }
 
         model: sessionModel
@@ -52,18 +43,13 @@ Item {
                 text: model.name
                 font.pointSize: root.font.pointSize * 0.8
                 font.family: root.font.family
-                color: selectSession.highlightedIndex === index ? root.palette.highlight.hslLightness >= 0.7 ? "#444444" : "white" : root.palette.window.hslLightness >= 0.8 ? root.palette.highlight.hslLightness >= 0.8 ? "#444444" : root.palette.highlight : "white"
+                color: selectSession.highlightedIndex === index ? root.palette.highlight : root.palette.text
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
             }
-            highlighted: parent.highlightedIndex === index
             background: Rectangle {
                 color: selectSession.highlightedIndex === index ? root.palette.highlight : "transparent"
             }
-        }
-
-        indicator {
-            visible: false
         }
 
         contentItem: Text {
@@ -75,18 +61,12 @@ Item {
             anchors.leftMargin: 3
             font.pointSize: root.font.pointSize * 0.8
             font.family: root.font.family
-            Keys.onReleased: parent.popup.open()
         }
 
         background: Rectangle {
             color: "transparent"
             border.width: parent.visualFocus ? 1 : 0
-            border.color: "transparent"
-            height: parent.visualFocus ? 2 : 0
-            width: displayedItem.implicitWidth
-            anchors.top: parent.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: 3
+            border.color: root.palette.highlight
         }
 
         popup: Popup {
@@ -95,7 +75,15 @@ Item {
             x: config.ForceRightToLeft == "true" ? -loginButtonWidth + displayedItem.width : 0
             width: sessionButton.width
             implicitHeight: contentItem.implicitHeight
-            padding: 10
+            opacity: 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            onOpened: opacity = 1
+            onClosed: opacity = 0
 
             contentItem: ListView {
                 clip: true
@@ -108,20 +96,18 @@ Item {
             background: Rectangle {
                 radius: config.RoundCorners / 2
                 color: config.BackgroundColor
+                border.color: root.palette.highlight
+                border.width: 1
                 layer.enabled: true
                 layer.effect: DropShadow {
                     transparentBorder: true
                     horizontalOffset: 0
-                    verticalOffset: 0
-                    radius: 20 * config.InterfaceShadowSize
-                    samples: 41 * config.InterfaceShadowSize
+                    verticalOffset: 10
+                    radius: 15
+                    samples: 25
                     cached: true
-                    color: Qt.hsla(0,0,0,config.InterfaceShadowOpacity)
+                    color: Qt.rgba(0, 0, 0, 0.5)
                 }
-            }
-
-            enter: Transition {
-                NumberAnimation { property: "opacity"; from: 0; to: 1 }
             }
         }
 
@@ -172,7 +158,5 @@ Item {
                 }
             }
         ]
-
     }
-
 }

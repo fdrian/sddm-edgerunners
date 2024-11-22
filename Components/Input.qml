@@ -17,7 +17,7 @@ Column {
         Label {
             id: errorMessage
             width: parent.width
-            text: failed ? config.TranslateLoginFailedWarning || textConstants.loginFailed + "!" : keyboard.capsLock ? config.TranslateCapslockWarning || textConstants.capslockWarning : null
+            text: failed ? config.TranslateLoginFailedWarning || "Login failed!" : keyboard.capsLock ? "Caps Lock is ON" : null
             horizontalAlignment: Text.AlignHCenter
             font.family: "Rajdhani"
             font.pointSize: root.font.pointSize * 0.8
@@ -36,6 +36,11 @@ Column {
                     PropertyChanges { target: errorMessage; opacity: 0.8 }
                 }
             ]
+            transitions: [
+                Transition {
+                    PropertyAnimation { properties: "opacity"; duration: 200 }
+                }
+            ]
         }
     }
 
@@ -50,7 +55,7 @@ Column {
             font.family: "Rajdhani"
             font.bold: true
             color: "#e8615a"
-            placeholderText: config.TranslatePlaceholderUsername || textConstants.userName
+            placeholderText: config.TranslatePlaceholderUsername || "Username"
             placeholderTextColor: "#9c3230"
             width: parent.width
             height: 46
@@ -58,22 +63,22 @@ Column {
             background: Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "#101010"
-                border.color: "#101010"
-                border.width: 2
-                radius: 0
+                color: "black"
+                border.color: "transparent"
 
                 Rectangle {
-                    id: bottomLoginBorder
+                    id: bottomBorder
                     width: parent.width
                     height: 2
-                    color: username.activeFocus ? "#FADA16" : "transparent"
+                    color: username.activeFocus ? "#FADA16" : "#101010"
                     anchors.bottom: parent.bottom
                 }
             }
 
-            onAccepted: config.AllowBadUsernames == "false" ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) : sddm.login(username.text, password.text, sessionSelect.selectedSession)
-            KeyNavigation.down: showPassword
+            onAccepted: config.AllowBadUsernames == "false" 
+                ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) 
+                : sddm.login(username.text, password.text, sessionSelect.selectedSession)
+            KeyNavigation.down: password
         }
     }
 
@@ -88,29 +93,30 @@ Column {
             font.family: "Rajdhani"
             font.bold: true
             echoMode: TextInput.Password
-            placeholderText: config.TranslatePlaceholderPassword || textConstants.password
-            placeholderTextColor: "#9c3230"
+            color: "#e8615a"
+            placeholderText: config.TranslatePlaceholderPassword || "Password"
+            placeholderTextColor: "#9c3230"            
             width: parent.width
             height: 46
 
             background: Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "#101010"
-                border.color: "#101010"
-                border.width: 2
-                radius: 0
+                color: "black"
+                border.color: "transparent"
 
                 Rectangle {
-                    id: bottomPasswordBorder
+                    id: bottomBorderPassword
                     width: parent.width
                     height: 2
-                    color: password.activeFocus ? "#FADA16" : "transparent"
+                    color: password.activeFocus ? "#FADA16" : "#101010"
                     anchors.bottom: parent.bottom
                 }
             }
 
-            onAccepted: config.AllowBadUsernames == "false" ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) : sddm.login(username.text, password.text, sessionSelect.selectedSession)
+            onAccepted: config.AllowBadUsernames == "false" 
+                ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) 
+                : sddm.login(username.text, password.text, sessionSelect.selectedSession)
             KeyNavigation.down: loginButton
         }
     }
@@ -126,95 +132,67 @@ Column {
             id: loginButton
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            text: config.TranslateLogin || textConstants.login
+            text: config.TranslateLogin || "Login"
             height: root.font.pointSize * 3
             width: 400
-            enabled: config.AllowEmptyPassword == "true" || username.text != "" && password.text != "" ? true : false
-            hoverEnabled: true
-
-            contentItem: Text {
-                text: parent.text
-                color: "black"
-                font.pointSize: root.font.pointSize
-                font.family: root.font.family
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                opacity: 1
-            }
+            enabled: config.AllowEmptyPassword == "true" || (username.text !== "" && password.text !== "") ? true : false
 
             background: Rectangle {
                 id: buttonBackground
                 color: "#FADA16"
-                opacity: 1
-                radius: 0
+                radius: 5
             }
 
             states: [
                 State {
                     name: "pressed"
                     when: loginButton.down
-                    PropertyChanges {
-                        target: buttonBackground
-                        color: Qt.darker("#FADA16", 1.1)
-                        opacity: 1
-                    }
+                    PropertyChanges { target: buttonBackground; color: Qt.darker("#FADA16", 1.1) }
                 },
                 State {
                     name: "hovered"
                     when: loginButton.hovered
-                    PropertyChanges {
-                        target: buttonBackground
-                        color: "cyan"
-                        opacity: 1
-                    }
+                    PropertyChanges { target: buttonBackground; color: "cyan" }
                 },
                 State {
                     name: "focused"
                     when: loginButton.activeFocus
-                    PropertyChanges {
-                        target: buttonBackground
-                        color: Qt.lighter("#FADA16", 1.2)
-                        opacity: 1
-                    }
+                    PropertyChanges { target: buttonBackground; color: Qt.lighter("#FADA16", 1.2) }
                 },
                 State {
                     name: "enabled"
                     when: loginButton.enabled
-                    PropertyChanges {
-                        target: buttonBackground
-                        color: "#FADA16"
-                        opacity: 1
-                    }
+                    PropertyChanges { target: buttonBackground; color: "#FADA16" }
                 }
             ]
 
             transitions: [
                 Transition {
-                    PropertyAnimation {
-                        properties: "opacity, color"
-                        duration: 300
-                    }
+                    PropertyAnimation { properties: "color"; duration: 300 }
                 }
             ]
-            onClicked: config.AllowBadUsernames == "false" ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) : sddm.login(username.text, password.text, sessionSelect.selectedSession)
+            onClicked: config.AllowBadUsernames == "false" 
+                ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) 
+                : sddm.login(username.text, password.text, sessionSelect.selectedSession)
             Keys.onReturnPressed: clicked()
             Keys.onEnterPressed: clicked()
-            KeyNavigation.down: sessionSelect.exposeSession
         }
     }
 
     SessionButton {
         id: sessionSelect
-        loginButtonWidth: loginButton.background.width
+        loginButtonWidth: loginButton.width
     }
+
     Connections {
         target: sddm
-        onLoginSucceeded: {}
+        onLoginSucceeded: { failed = false }
         onLoginFailed: {
             failed = true
-            resetError.running ? resetError.stop() && resetError.start() : resetError.start()
+            resetError.running ? resetError.restart() : resetError.start()
         }
     }
+
     Timer {
         id: resetError
         interval: 2000
