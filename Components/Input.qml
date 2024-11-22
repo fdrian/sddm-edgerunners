@@ -19,7 +19,7 @@ Column {
             width: parent.width
             text: failed ? config.TranslateLoginFailedWarning || textConstants.loginFailed + "!" : keyboard.capsLock ? config.TranslateCapslockWarning || textConstants.capslockWarning : null
             horizontalAlignment: Text.AlignHCenter
-            font.family: "VT323"
+            font.family: "Rajdhani"
             font.pointSize: root.font.pointSize * 0.8
             font.italic: true
             color: "#e8615a"
@@ -63,7 +63,6 @@ Column {
                 border.width: 2
                 radius: 0
 
-                // Borda inferior destacada
                 Rectangle {
                     id: bottomLoginBorder
                     width: parent.width
@@ -102,7 +101,6 @@ Column {
                 border.width: 2
                 radius: 0
 
-                // Borda inferior destacada
                 Rectangle {
                     id: bottomPasswordBorder
                     width: parent.width
@@ -118,109 +116,93 @@ Column {
     }
 
     Item {
-    id: login
-    height: root.font.pointSize * 9
-    width: 400 // Largura fixa do botão
-    anchors.horizontalCenter: parent.horizontalCenter
-    visible: config.HideLoginButton == "true" ? false : true
-
-    Button {
-        id: loginButton
+        id: login
+        height: root.font.pointSize * 9
+        width: 400
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        text: config.TranslateLogin || textConstants.login
-        height: root.font.pointSize * 3
-        width: 400 
-        enabled: config.AllowEmptyPassword == "true" || username.text != "" && password.text != "" ? true : false
-        hoverEnabled: true
+        visible: config.HideLoginButton == "true" ? false : true
 
-        contentItem: Text {
-            text: parent.text
-            color: "black" 
-            font.pointSize: root.font.pointSize
-            font.family: root.font.family
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            opacity: 1
-        }
+        Button {
+            id: loginButton
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            text: config.TranslateLogin || textConstants.login
+            height: root.font.pointSize * 3
+            width: 400
+            enabled: config.AllowEmptyPassword == "true" || username.text != "" && password.text != "" ? true : false
+            hoverEnabled: true
 
-        background: Rectangle {
-            id: buttonBackground
-            color: "#FADA16" // Amarelo de fundo padrão
-            opacity: 1
-            radius: 0 // Remove o arredondamento
-        }
-
-        states: [
-            State {
-                name: "pressed"
-                when: loginButton.down
-                PropertyChanges {
-                    target: buttonBackground
-                    color: Qt.darker("#FADA16", 1.1) // Escurece um pouco no clique
-                    opacity: 1
-                }
-                PropertyChanges {
-                    target: loginButton.contentItem
-                }
-            },
-            State {
-                name: "hovered"
-                when: loginButton.hovered
-                PropertyChanges {
-                    target: buttonBackground
-                    color: "cyan" // Cor ciano ao passar o mouse
-                    opacity: 1
-                }
-                PropertyChanges {
-                    target: loginButton.contentItem
-                    opacity: 1
-                }
-            },
-            State {
-                name: "focused"
-                when: loginButton.activeFocus
-                PropertyChanges {
-                    target: buttonBackground
-                    color: Qt.lighter("#FADA16", 1.2) // Mantém o amarelo ao focar
-                    opacity: 1
-                }
-                PropertyChanges {
-                    target: loginButton.contentItem
-                    opacity: 1
-                }
-            },
-            State {
-                name: "enabled"
-                when: loginButton.enabled
-                PropertyChanges {
-                    target: buttonBackground
-                    color: "#FADA16"
-                    opacity: 1
-                }
-                PropertyChanges {
-                    target: loginButton.contentItem
-                    opacity: 1
-                }
+            contentItem: Text {
+                text: parent.text
+                color: "black"
+                font.pointSize: root.font.pointSize
+                font.family: root.font.family
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                opacity: 1
             }
-        ]
 
-        transitions: [
-            Transition {
-                PropertyAnimation {
-                    properties: "opacity, color"
-                    duration: 300
-                }
+            background: Rectangle {
+                id: buttonBackground
+                color: "#FADA16"
+                opacity: 1
+                radius: 0
             }
-        ]
-        onClicked: config.AllowBadUsernames == "false" ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) : sddm.login(username.text, password.text, sessionSelect.selectedSession)
-        Keys.onReturnPressed: clicked()
-        Keys.onEnterPressed: clicked()
-        KeyNavigation.down: sessionSelect.exposeSession
+
+            states: [
+                State {
+                    name: "pressed"
+                    when: loginButton.down
+                    PropertyChanges {
+                        target: buttonBackground
+                        color: Qt.darker("#FADA16", 1.1)
+                        opacity: 1
+                    }
+                },
+                State {
+                    name: "hovered"
+                    when: loginButton.hovered
+                    PropertyChanges {
+                        target: buttonBackground
+                        color: "cyan"
+                        opacity: 1
+                    }
+                },
+                State {
+                    name: "focused"
+                    when: loginButton.activeFocus
+                    PropertyChanges {
+                        target: buttonBackground
+                        color: Qt.lighter("#FADA16", 1.2)
+                        opacity: 1
+                    }
+                },
+                State {
+                    name: "enabled"
+                    when: loginButton.enabled
+                    PropertyChanges {
+                        target: buttonBackground
+                        color: "#FADA16"
+                        opacity: 1
+                    }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    PropertyAnimation {
+                        properties: "opacity, color"
+                        duration: 300
+                    }
+                }
+            ]
+            onClicked: config.AllowBadUsernames == "false" ? sddm.login(username.text.toLowerCase(), password.text, sessionSelect.selectedSession) : sddm.login(username.text, password.text, sessionSelect.selectedSession)
+            Keys.onReturnPressed: clicked()
+            Keys.onEnterPressed: clicked()
+            KeyNavigation.down: sessionSelect.exposeSession
+        }
     }
-}
 
-    
     SessionButton {
         id: sessionSelect
         loginButtonWidth: loginButton.background.width
@@ -233,12 +215,10 @@ Column {
             resetError.running ? resetError.stop() && resetError.start() : resetError.start()
         }
     }
-        Timer {
+    Timer {
         id: resetError
         interval: 2000
         onTriggered: failed = false
         running: false
     }
-    
 }
-

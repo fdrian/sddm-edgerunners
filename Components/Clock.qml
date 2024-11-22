@@ -4,11 +4,11 @@ import QtQuick.Controls 2.15
 Column {
     id: clock
     spacing: 0
-    width: parent.width / 2
+    width: parent.width / 3
 
     Label {
         anchors.horizontalCenter: parent.horizontalCenter
-        font.family: "VT323"
+        font.family: "Rajdhani"
         font.pointSize: root.font.pointSize * 3
         color: "#e8615a"
         text: config.HeaderText
@@ -17,9 +17,9 @@ Column {
     Label {
         id: timeLabel
         anchors.horizontalCenter: parent.horizontalCenter
-        font.family: "VT323"
-        font.pointSize: root.font.pointSize * 3
-        color: "#e8615a"
+        font.family: "Rajdhani"
+        font.pointSize: root.font.pointSize * 4
+        color: "#fada16"
         function updateTime() {
             text = new Date().toLocaleTimeString(Qt.locale(config.Locale), config.HourFormat == "long" ? Locale.LongFormat : Locale.ShortFormat)
         }
@@ -30,7 +30,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         color: "#e8615a"
         font.family: "Rajdhani"
-        font.pointSize: root.font.pointSize * 2
+        font.pointSize: root.font.pointSize * 1.25
         function updateTime() {
             text = new Date().toLocaleDateString(Qt.locale(config.Locale), config.DateFormat == "short" ? Locale.ShortFormat : Locale.LongFormat)
         }
