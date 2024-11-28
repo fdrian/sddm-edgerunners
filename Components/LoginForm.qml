@@ -3,7 +3,6 @@
 
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import Qt5Compat.GraphicalEffects
 import SddmComponents 2.0 as SDDM
 
 Item {
@@ -18,39 +17,17 @@ Item {
     property alias clockVisibility: clock.visible
     property bool virtualKeyboardActive
 
-    // Efeito de vidro: desfoque com opacidade apenas no fundo do LoginForm
-    ShaderEffectSource {
-        id: blurSource
-        sourceItem: backgroundImage // Defina o item de fundo da interface como fonte
-        width: formContainer.width
-        height: formContainer.height
-        smooth: true
-        hideSource: true
-        sourceRect: Qt.rect(formContainer.x, formContainer.y, formContainer.width, formContainer.height) // Captura apenas a área do formulário
-    }
-
-    GaussianBlur {
-        id: glassBlur
-        width: formContainer.width
-        height: formContainer.height
-        source: blurSource
-        radius: 40
-        samples: 30
-        anchors.fill: parent
-        opacity: 0.9
-    }
 
     Rectangle {
         anchors.fill: parent
         color: "#000000"
         opacity: 0.8
-        radius: 0
     }
 
     ColumnLayout {
         id: content
         anchors.fill: parent
-        anchors.margins: 20 // Margem para separar o conteúdo do fundo desfocado
+        anchors.margins: 20
 
         Clock {
             id: clock

@@ -3,7 +3,6 @@
 
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import Qt5Compat.GraphicalEffects
 
 Item {
     id: sessionButton
@@ -99,15 +98,6 @@ Item {
                 border.color: root.palette.highlight
                 border.width: 1
                 layer.enabled: true
-                layer.effect: DropShadow {
-                    transparentBorder: true
-                    horizontalOffset: 0
-                    verticalOffset: 10
-                    radius: 15
-                    samples: 25
-                    cached: true
-                    color: Qt.rgba(0, 0, 0, 0.5)
-                }
             }
         }
 

@@ -4,7 +4,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
-import Qt5Compat.GraphicalEffects
+
 import "Components"
 
 Pane {
@@ -27,42 +27,13 @@ Pane {
         id: sizeHelper
         anchors.fill: parent
 
-        // Efeito de vidro aplicado a toda a imagem de fundo
-        ShaderEffectSource {
-            id: blurSource
-            sourceItem: backgroundImage
-            width: parent.width
-            height: parent.height
-            smooth: true
-            hideSource: true
-        }
-
-        GaussianBlur {
-            id: glassBlur
-            width: parent.width
-            height: parent.height
-            source: blurSource
-            radius: 20 // Ajuste o raio para controlar a intensidade do desfoque
-            samples: 30
-            anchors.fill: parent
-            opacity: 0.6 // Leve transparência para o efeito de vidro
-        }
-
+        // Fundo de fallback caso a imagem não carregue
         Rectangle {
-            id: tintLayer
+            id: backgroundLayer
             anchors.fill: parent
-            color: "#000000"
-            opacity: 0.2
-            z: 1
+            color: "#191a1e"
         }
 
-        LoginForm {
-            id: form
-            width: parent.width / 4
-            height: parent.height / 2
-            anchors.centerIn: parent
-            z: 2
-        }
 
         Image {
             id: backgroundImage
@@ -71,9 +42,41 @@ Pane {
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
             cache: true
-            clip: true
             mipmap: true
-            visible: false // A imagem é usada apenas como fonte para o ShaderEffect
+        }
+
+        MouseArea {
+            anchors.fill: backgroundImage
+            onClicked: parent.forceActiveFocus()
+        }
+
+        ShaderEffectSource {
+            id: blurMask
+
+            sourceItem: backgroundImage
+            width: form.width
+            height: parent.height
+            anchors.centerIn: form
+            sourceRect: Qt.rect(x,y,width,height)
+            visible: config.FullBlur == "true" || config.PartialBlur == "true" ? true : false
+        }
+        
+        // Camada de tonalidade para escurecer o fundo
+        Rectangle {
+            id: tintLayer
+            anchors.fill: parent
+            color: "#000000"
+            opacity: 0.2
+            z: 1
+        }
+
+        // Formulário de login
+        LoginForm {
+            id: form
+            width: parent.width / 4
+            height: parent.height / 2
+            anchors.centerIn: parent
+            z: 2
         }
     }
 }
